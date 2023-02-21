@@ -20,6 +20,7 @@ func main() {
 	}
 
 	tank.PROC = "nginx"
+	tank.OUT = false
 
 	// service or systemd
 	com := "service"
@@ -37,12 +38,16 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	start := func() {
 		tr := rand.Intn(int(tank.START_MAX-tank.START_MIN)) + int(tank.START_MIN)
-		fmt.Println(tr)
+		if tank.OUT {
+			fmt.Println(tr)
+		}
 		time.Sleep(time.Duration(tr) * time.Second)
 	}
 	stop := func() {
 		tr := rand.Intn(int(tank.STOP_MAX-tank.STOP_MIN)) + int(tank.STOP_MIN)
-		fmt.Println(tr)
+		if tank.OUT {
+			fmt.Println(tr)
+		}
 		time.Sleep(time.Duration(tr) * time.Second)
 	}
 	for {
@@ -70,5 +75,7 @@ func run(com string, act string) {
 		c := exec.Command(com, cmd...)
 		c.Run()
 	}
-	fmt.Println(com, cmd)
+	if tank.OUT {
+		fmt.Println(com, cmd)
+	}
 }
