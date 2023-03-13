@@ -28,12 +28,12 @@ func main() {
 	service_ret, err := service_r.CombinedOutput()
 
 	if !strings.HasPrefix(string(service_ret), "Usage") || err != nil {
-		systemd_r := exec.Command("systemd")
+		systemd_r := exec.Command("systemctl", "--version")
 		systemd_ret, err := systemd_r.CombinedOutput()
-		if !strings.HasPrefix(string(systemd_ret), "Trying") || err != nil {
+		if !strings.HasPrefix(string(systemd_ret), "systemd") || err != nil {
 			log.Fatal("Failed")
 		}
-		com = "systemd"
+		com = "systemctl"
 	}
 	rand.Seed(time.Now().UnixNano())
 	start := func() {
@@ -59,16 +59,15 @@ func main() {
 }
 
 func run(com string, act string) {
-	cmd := []string{}
-	if com == "systemd" {
-		cmd = []string{
+	if com == "systemctl" {
+		cmd := []string{
 			act,
 			tank.PROC,
 		}
 		c := exec.Command(com, cmd...)
 		c.Run()
 	} else {
-		cmd = []string{
+		cmd := []string{
 			tank.PROC,
 			act,
 		}
@@ -76,6 +75,6 @@ func run(com string, act string) {
 		c.Run()
 	}
 	if tank.OUT {
-		fmt.Println(com, cmd)
+		fmt.Println(com, "run failed")
 	}
 }
